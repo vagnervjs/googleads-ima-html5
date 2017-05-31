@@ -34,10 +34,15 @@ function setUpIMA() {
 
   // Request video ads.
   var adsRequest = new google.ima.AdsRequest();
-  adsRequest.adTagUrl = 'https://pubads.g.doubleclick.net/gampad/ads?' +
-      'sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&' +
-      'impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&' +
-      'cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=';
+
+  // ORIGINAL SAMPLE URL
+  // adsRequest.adTagUrl = 'https://pubads.g.doubleclick.net/gampad/ads?' +
+  //     'sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&' +
+  //     'impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&' +
+  //     'cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=';
+
+  // VPAID TEST URL
+  adsRequest.adTagUrl = '';
 
   // Specify the linear and nonlinear slot sizes. This helps the SDK to
   // select the correct creative if multiple are returned.
@@ -54,6 +59,10 @@ function setUpIMA() {
 function createAdDisplayContainer() {
   // We assume the adContainer is the DOM id of the element that will house
   // the ads.
+
+  google.ima.settings.setLocale('pt-br')
+  google.ima.settings.setVpaidMode(google.ima.ImaSdkSettings.VpaidMode.ENABLED)
+
   adDisplayContainer = new google.ima.AdDisplayContainer(
       document.getElementById('adContainer'), videoContent);
 }
@@ -78,7 +87,10 @@ function playAds() {
 function onAdsManagerLoaded(adsManagerLoadedEvent) {
   // Get the ads manager.
   var adsRenderingSettings = new google.ima.AdsRenderingSettings();
+  adsRenderingSettings.enablePreloading = true; // SET TO TRUE AND VPAID WILL FAIL
   adsRenderingSettings.restoreCustomPlaybackStateOnAdBreakComplete = true;
+  adsRenderingSettings.useStyledNonLinearAds = true;
+
   // videoContent should be set to the content video element.
   adsManager = adsManagerLoadedEvent.getAdsManager(
       videoContent, adsRenderingSettings);
